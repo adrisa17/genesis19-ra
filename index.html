@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GÉNESIS 19 · Realidad aumentada</title>
+<meta name="theme-color" content="#08080a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400&display=swap">
+<style>
+  :root {
+    --bg: #08080a; --fg: #efe7de; --muted: #a39a91; --ember: #ff7a33; --line: #2a2420;
+    --f-display: "Instrument Serif", "Times New Roman", serif;
+    --f-body: "Newsreader", Georgia, serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); overflow: hidden; }
+  body { font-family: var(--f-body); -webkit-font-smoothing: antialiased; }
+  #ar { position: fixed; inset: 0; }
+  /* MindAR inserta su <video> y su <canvas> dentro de #ar */
+  #ar video, #ar canvas { position: absolute !important; }
+
+  .pantalla {
+    position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end;
+    gap: 20px; box-sizing: border-box;
+    padding: max(32px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+    background: radial-gradient(ellipse at 50% 30%, #1d1310 0%, var(--bg) 65%);
+  }
+  .pantalla[hidden] { display: none; }
+  .etiqueta { font-family: var(--f-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: clamp(56px, 18vw, 96px); line-height: .95; }
+  h1 em { color: var(--ember); }
+  .pantalla p { margin: 0; font-size: 18px; line-height: 1.5; max-width: 32ch; color: var(--fg); }
+  .boton {
+    appearance: none; border: 0; border-radius: 999px; background: var(--ember); color: #1a0b04;
+    font-family: var(--f-mono); font-size: 15px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+    min-height: 52px; padding: 0 28px; align-self: flex-start; cursor: pointer;
+  }
+  .boton:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+  .boton.sec { background: rgba(20,16,14,.72); color: var(--fg); border: 1px solid #5a4a40; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .error { color: #ffb3a1; font-family: var(--f-mono); font-size: 13px; line-height: 1.5; }
+
+  .aviso {
+    position: fixed; left: 50%; transform: translateX(-50%); z-index: 5;
+    top: max(20px, env(safe-area-inset-top)); width: min(88vw, 360px); box-sizing: border-box;
+    padding: 12px 16px; border-radius: 12px; background: rgba(12,10,9,.78); border: 1px solid var(--line);
+    font-family: var(--f-mono); font-size: 13px; line-height: 1.5; text-align: center; color: var(--fg);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: opacity .3s;
+  }
+  .aviso[hidden] { display: block; opacity: 0; pointer-events: none; }
+  .controles {
+    position: fixed; z-index: 5; left: 0; right: 0; display: flex; justify-content: center; gap: 12px;
+    bottom: max(24px, env(safe-area-inset-bottom));
+  }
+  .controles[hidden] { display: none; }
+  @media (prefers-reduced-motion: reduce) { .aviso { transition: none; } }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+    "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="ar"></div>
+
+  <section class="pantalla" id="inicio">
+    <span class="etiqueta">Lámina · página 5</span>
+    <h1>Génesis <em>19</em></h1>
+    <p>Ten a mano la lámina del meteorito. Cuando se abra la cámara, apúntala a la ilustración completa.</p>
+    <button class="boton" id="btnIniciar" type="button">Abrir cámara</button>
+    <span class="error" id="error" hidden></span>
+  </section>
+
+  <div class="aviso" id="aviso" hidden>Busca la lámina de la página 5 y encuádrala completa.</div>
+
+  <div class="controles" id="controles" hidden>
+    <button class="boton sec" id="btnRepetir" type="button">Repetir caída</button>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
