@@ -15,9 +15,13 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 export const AJUSTES = {
   escala: 0.21,                 // el modelo mide ~2 m; 0.21 → ~42 % del ancho de la lámina
   reposo: new THREE.Vector3(0, 0.18, 0),     // centro del meteorito ya posado
-  inicioCaida: new THREE.Vector3(0.9, 2.6, -0.5),
+  // Punto de partida de la caída. Y = altura sobre la página (hacia el lector);
+  // Z negativo = hacia arriba de la ilustración. Así entra "desde el cielo del bosque"
+  // y no pasa por delante de la cámara.
+  inicioCaida: new THREE.Vector3(0.45, 0.9, -1.4),
   duracionCaida: 1.6,           // segundos
-  brilloCaida: 9,               // fuerza emisiva al rojo vivo durante la caída
+  brilloCaida: 6,               // fuerza emisiva al rojo vivo durante la caída
+  tamHalo: 0.32,                // resplandor alrededor de la bola de fuego
   brilloReposo: 4,              // la del archivo GLB
   segundosEnfriado: 4,
   particulasFuego: 70,
@@ -143,11 +147,12 @@ export async function crearMeteorito(urlModelo) {
       pivote.position.copy(posCaida);
       material.emissiveIntensity = AJUSTES.brilloCaida;
       halo.visible = true; halo.position.copy(posCaida);
-      const th = 0.55 + 0.1 * Math.sin(t * 40); halo.scale.set(th, th, 1);
+      const th = AJUSTES.tamHalo * (1 + 0.15 * Math.sin(t * 40)); halo.scale.set(th, th, 1);
+      halo.material.opacity = 0.7;
       // emitir fuego desde la posición actual (la estela queda atrás porque cada sprite se queda donde nació)
       for (let k2 = 0; k2 < 3; k2++) {
         const p = fuego[iFuego++ % fuego.length];
-        p.activo = true; p.vida = 0; p.dur = 0.35 + Math.random() * 0.35; p.tam = 0.18 + Math.random() * 0.14;
+        p.activo = true; p.vida = 0; p.dur = 0.35 + Math.random() * 0.35; p.tam = 0.10 + Math.random() * 0.08;
         p.s.position.copy(posCaida).add(new THREE.Vector3((Math.random() - .5) * .12, (Math.random() - .5) * .12, (Math.random() - .5) * .12));
         p.v.set(0, 0.05, 0); p.s.visible = true;
       }
@@ -175,7 +180,7 @@ export async function crearMeteorito(urlModelo) {
       p.vida += dt; const L = p.vida / p.dur;
       if (L >= 1) { p.activo = false; p.s.visible = false; continue; }
       p.s.position.addScaledVector(p.v, dt);
-      const s = p.tam * (1 - 0.6 * L); p.s.scale.set(s, s, 1); p.s.material.opacity = 1 - L;
+      const s = p.tam * (1 - 0.6 * L); p.s.scale.set(s, s, 1); p.s.material.opacity = 0.75 * (1 - L);
     }
     for (const p of brasas) {
       if (!p.activo) continue;
