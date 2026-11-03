@@ -29,6 +29,7 @@ function mostrarError(texto) {
 
 function prepararRenderer(renderer, scene) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.25;   // un poco más claro: el papel y la pantalla suelen verse brillantes
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   const pm = new THREE.PMREMGenerator(renderer);
   scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -41,7 +42,7 @@ async function iniciarRA() {
     container: $('ar'),
     imageTargetSrc: MARCADOR_MIND,
     uiLoading: 'no', uiScanning: 'no', uiError: 'no',
-    filterMinCF: 0.0001, filterBeta: 0.001,   // suaviza el temblor del seguimiento
+    filterMinCF: 0.0001, filterBeta: 0.01,    // suaviza el temblor sin que el meteorito se quede atrás al mover el celular
   });
   const { renderer, scene, camera } = mindar;
   prepararRenderer(renderer, scene);

@@ -58,8 +58,8 @@ export async function crearMeteorito(urlModelo) {
   const raiz = new THREE.Group();
 
   // Luces: pensadas para verse bien sobre papel bajo luz ambiente.
-  raiz.add(new THREE.HemisphereLight(0xd8d2ca, 0x2a1d16, 1.1));
-  const sol = new THREE.DirectionalLight(0xfff1e0, 1.6); sol.position.set(1.5, 3, 1.2); raiz.add(sol);
+  raiz.add(new THREE.HemisphereLight(0xd8d2ca, 0x2a1d16, 1.6));
+  const sol = new THREE.DirectionalLight(0xfff1e0, 2.0); sol.position.set(1.5, 3, 1.2); raiz.add(sol);
   const contra = new THREE.DirectionalLight(0x8fa6ff, 0.8); contra.position.set(-2, 1, -2); raiz.add(contra);
   const calor = new THREE.PointLight(0xff5a1a, 0, 1.2, 2); raiz.add(calor);
 
